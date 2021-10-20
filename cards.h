@@ -4,18 +4,18 @@
 typedef struct Card {
 	char face;
 	char suit;
-    char style; // filler character for text renderer
+	char style; // filler character for text renderer
 
-    // If hidden, the renderer will not show card value
-	_Bool hidden;
+	// If hidden, the renderer will not show card value
+	bool hidden;
 } Card;
 
 typedef struct CardNode {
 	Card *cptr; // Pointer to card struct
 	struct CardNode *next; // Next CardNode in list
 	
-    // For first node
-	_Bool first;
+	// For first node
+	bool first;
 	struct CardNode *head; // All nodes will have a head pointer
 	int size; // Size of deck is stored in first node
 } CardNode;

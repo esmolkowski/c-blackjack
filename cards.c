@@ -7,7 +7,7 @@ int getTotal(CardNode * nxt) {
 	// Loop through all cards in hand
 	int total = 0;
 	while (nxt != NULL) {
-		if (nxt->cptr->hidden == 0) {
+		if (!(nxt->cptr->hidden)) {
 			total = total + cardToInt(nxt->cptr);
 		}
 		nxt = nxt->next;
@@ -84,7 +84,7 @@ Card * randomCard() {
 	Card *cptr = malloc(sizeof(Card));
 	cptr->face = faces[rand()%13];
 	cptr->suit = suits[rand()%4];
-	cptr->hidden = 0;
+	cptr->hidden = false;
 	cptr->style = ' ';
 
 	return cptr;
@@ -109,7 +109,7 @@ CardNode * initNewList(Deck* deck) {
 	first->cptr = drawCard(deck); //randomCard();
 	first->next = NULL; // No next card yet
 	first->size = 1;
-	first->first = 1; // Define this Node as the first.
+	first->first = true; // Define this Node as the first.
 	first->head = first; // Sets head of list to this node
 
 	return first;
@@ -160,7 +160,7 @@ Deck * newDeck(int numDecks) {
 				Card *cptr = malloc(sizeof(Card));
 				cptr->face = face;
 				cptr->suit = suit;
-				cptr->hidden = 0;
+				cptr->hidden = false;
 				cptr->style = ' ';
 
 				cards[index] = cptr;
