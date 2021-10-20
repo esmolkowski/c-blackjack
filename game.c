@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <stdbool.h>
 #include "cards.h"
 #include "renderer.h"
 #include "game.h"
@@ -21,12 +22,16 @@
 	}
 #endif
 
-void runLogic() {
+void runLogic(int numDecks,float shuffleAt) {
     Game game;
     game.chips = 1000;
     game.bet = 0;
-    game.ingame = true;
+    game.inGame = true;
     game.running = true;
+	game.shuffleAt = shuffleAt;
+
+    game.deck = newDeck(numDecks); // create numDecks of 52 card decks
+    shuffleDeck(game.deck); // shuffle the deck
 
     setbuf(stdout, NULL); // fixes scanf issue
 	srand(time(0)); //use current time as seed for random generator
@@ -36,20 +41,23 @@ void runLogic() {
 		printf("CHIPS: %d\n", game.chips);
 		printf("BET: ");
 		scanf(" %d", &game.bet);
-		//game.bet = 10;
 		printf("\n");
 		if (game.bet < 0 || game.chips - game.bet < 0)
 			continue;
 		game.chips = game.chips - game.bet;
-		//CardNode *phand = initNewList();
-		//CardNode *dhand = initNewList();
-        game.phand = initNewList();
-        game.dhand = initNewList();
-		//make first dealer card hidden
+
+        game.phand = initNewList(game.deck);
+        game.dhand = initNewList(game.deck);
+
+		// make first dealer card hidden
 		game.dhand->cptr->hidden = 1;
 		game.dhand->cptr->style = 'x';
-		addNode(game.phand);
-		addNode(game.dhand);
+		
+        // add second cards
+        addNode(game.phand,game.deck);
+		addNode(game.dhand,game.deck);
+
+        // display to user
 		renderScene(game.dhand,game.phand,game.chips,game.bet);
 
 		char choice = ' ';
@@ -58,21 +66,21 @@ void runLogic() {
 		scanf(" %c", &choice);
 		while ( choice != 'S' && (choice == 'H' || choice == 'D') )
 		{
-			_Bool redo = 0;
+			bool redo = false;
 			switch (choice)
 			{
 				case 'H' :
-					addNode(game.phand);
+					addNode(game.phand,game.deck);
 					renderScene(game.dhand,game.phand,game.chips,game.bet);
 					break;
 				case 'D' :
 					if (game.chips - game.bet < 0) {
-						redo = 1;
+						redo = true;
 						break;
 					}
 					game.chips = game.chips - game.bet;
 					game.bet = game.bet*2;
-					addNode(game.phand);
+					addNode(game.phand,game.deck);
 					renderScene(game.dhand,game.phand,game.chips,game.bet);
 					break;
 			}
@@ -96,19 +104,17 @@ void runLogic() {
 			// Stand
 			game.dhand->cptr->hidden = 0;
 			game.dhand->cptr->style = ' ';
-			_Bool skipped = 1;
-			renderScene(game.dhand,game.phand,game.chips,game.bet); // SHOW HIDDEN CARD
+			bool skipped = true;
+			renderScene(game.dhand,game.phand,game.chips,game.bet); // Show hidden card
 			sleepFor(2000);
 			while (getTotal(game.dhand) < getTotal(game.phand)) {
-				skipped = 0;
-				addNode(game.dhand);
+				skipped = false;
+				addNode(game.dhand,game.deck);
 				printf("\n\n");
 				renderScene(game.dhand,game.phand,game.chips,game.bet);
 				sleepFor(2000);
-			} // add code if dealer is tied at a low number
-			//if (skipped == 1)
-				//renderScene(game.dhand,game.phand,game.chips,game.bet);
-			//sleep(2000);
+			}
+
 			printf("\n\n                        ");
 
 			int dtotal = getTotal(game.dhand);
@@ -128,12 +134,19 @@ void runLogic() {
 			}
 		}
 
-        // Clear hands
+        // Clear hands from memory
         clearHand(game.phand);
         clearHand(game.dhand);
 
 		if (game.chips > 0) {
-			printf("\n\n\n--------------------------------NEW ROUND---------------------------------\n\n\n");
+			printf("\n\n\n--------------------------------NEW ROUND---------------------------------");
+			// Shuffle deck if needed
+			if (shouldShuffle(&game))
+			{
+				shuffleDeck(game.deck);
+				printf("\n                              DECK SHUFFLED                               ");
+			}
+			printf("\n\n\n");
 		} else {
 			printf("\n\n\n------------------------OUT OF CHIPS | GAME OVER--------------------------\n\n\n");
 			printf("EXITING IN 5 SECONDS");
@@ -143,7 +156,19 @@ void runLogic() {
 	}
 }
 
+bool shouldShuffle(Game* game)
+{
+	int pos = game->deck->position;
+	int maxpos = game->deck->size-1;
+	float used = (float)pos/maxpos;
+
+	return (used >= game->shuffleAt);
+}
+
 char aiMakeDecision(CardNode * dhand, CardNode * phand) {
+    // Currently unused, but can make basic decisions for player
+    // based on the current in play hands.
+
 	int dt = getTotal(dhand);
 	int pt = getTotal(phand);
 	char choice = ' ';

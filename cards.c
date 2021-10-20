@@ -4,9 +4,7 @@
 int getTotal(CardNode * nxt) {
 	CardNode * f;
 	f = nxt;
-	//loop through all cards in hand
-	//cnode *nxt;
-	//nxt = first.next;
+	// Loop through all cards in hand
 	int total = 0;
 	while (nxt != NULL) {
 		if (nxt->cptr->hidden == 0) {
@@ -14,7 +12,7 @@ int getTotal(CardNode * nxt) {
 		}
 		nxt = nxt->next;
 	}
-	//if total is over 21 check for aces
+	// If total is over 21 check for aces
 	if (total > 21) {
 		nxt = f;
 		while (nxt != NULL) {
@@ -31,6 +29,8 @@ int getTotal(CardNode * nxt) {
 }
 
 int cardToInt(Card *card) {
+	// Convert a card to int for scoring
+
 	char face = card->face;
 	int v = 0;
 	switch(face) {
@@ -78,7 +78,7 @@ int cardToInt(Card *card) {
 }
 
 Card * randomCard() {
-    // Fetches new random card
+	// Fetches new random card
 	char faces[13] = {'2','3','4','5','6','7','8','9','t','j','q','k','a'};
 	char suits[4] = {'d','c','h','s'};
 	Card *cptr = malloc(sizeof(Card));
@@ -86,40 +86,42 @@ Card * randomCard() {
 	cptr->suit = suits[rand()%4];
 	cptr->hidden = 0;
 	cptr->style = ' ';
+
 	return cptr;
 }
 
-void addNode(CardNode * fptr) {
-    // Adds a new Card to a hand
+void addNode(CardNode* fptr, Deck* deck) {
+	// Adds a new Card to a hand
 
 	CardNode *hptr = fptr->head; // Fetches curren head in list
 	CardNode *nptr = malloc(sizeof(CardNode)); // Allocates space for new node
-	nptr->cptr = randomCard();
+	nptr->cptr = drawCard(deck); //randomCard();
 	nptr->next = NULL;
 	hptr->next = nptr; // Sets next node on the old head to the new node
 	fptr->head = nptr; // Update head on first node
 	fptr->size++; // Update size on first node
 }
 
-CardNode * initNewList() {
+CardNode * initNewList(Deck* deck) {
 	// Initalizes new hand and returns first Node
 
 	CardNode *first = malloc(sizeof(CardNode));
-	first->cptr = randomCard();
+	first->cptr = drawCard(deck); //randomCard();
 	first->next = NULL; // No next card yet
 	first->size = 1;
 	first->first = 1; // Define this Node as the first.
 	first->head = first; // Sets head of list to this node
+
 	return first;
-	//cnode *hptr;
-	//hptr = &first;
 }
 
 void clearHand(CardNode * nxt) {
+	// Clears a hand from memory
+
 	CardNode * f; // Temporary pointer
 	while (nxt != NULL) {
-		// Clear the card
-		free(nxt->cptr);
+		// Clear the card -- will be done later when deck is cleared
+		//free(nxt->cptr);
 
 		// Set temporary var
 		f = nxt;
@@ -130,3 +132,95 @@ void clearHand(CardNode * nxt) {
 		free(f);
 	}
 }
+
+Deck * newDeck(int numDecks) {
+	int size = numDecks*52;
+	// Create array of card pointers
+	Card **cards = malloc( size * sizeof(Card*) );
+
+	char faces[13] = {'2','3','4','5','6','7','8','9','t','j','q','k','a'};
+	char suits[4] = {'d','c','h','s'};
+
+	int i,j,k;
+	int index = 0;
+	char suit,face;
+	// for each deck
+	for (i=0; i<numDecks; i++)
+	{
+		// for each face 
+		for (j=0; j<13; j++)
+		{
+			face = faces[j];
+			// for each face
+			for (k=0; k<4; k++)
+			{
+				suit = suits[k];
+
+				// Create new card
+				Card *cptr = malloc(sizeof(Card));
+				cptr->face = face;
+				cptr->suit = suit;
+				cptr->hidden = 0;
+				cptr->style = ' ';
+
+				cards[index] = cptr;
+				index++;
+			}
+		}
+	}
+	
+	Deck *deck = malloc(sizeof(Deck));
+	deck->cards = cards;
+	deck->size = size;
+	deck->position = 0;
+
+	return deck;
+}
+
+void shuffleDeck(Deck *deck)
+{
+	// Fisher–Yates shuffle algorithm
+	Card **a = deck->cards;
+	int n = deck->size;
+
+	int i,j;
+	Card *t;
+	for (i=n-1; i>0; i--)
+	{
+		j = rand()%(i+1);
+		// swap a[i] a[j]
+		t = a[i];
+		a[i] = a[j];
+		a[j] = t;
+	}
+}
+
+Card* drawCard(Deck* deck)
+{
+	// Pick card at current position
+	Card* card = deck->cards[deck->position];
+
+	// Update position unless on final card
+	if (deck->position < deck->size-1)
+	{
+		deck->position++;
+	}
+
+	return card;
+}
+
+#ifdef DEBUG
+	#include <stdio.h>
+	void printDeck(Deck *deck)
+	{
+		int i;
+		for (i=0;i<deck->size;i++)
+		{
+			Card *cptr = deck->cards[i];
+			printf("%c", cptr->face);
+			printf("%c", cptr->suit);
+			printf("%c", ',');
+		}
+		printf("%c", '\n');
+	}
+#endif

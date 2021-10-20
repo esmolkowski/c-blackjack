@@ -1,15 +1,18 @@
+#include <stdlib.h>
+#include <time.h>
 #include "game.h"
-
-/*
-void delay(int ms)
-{
-	clock_t start = clock();
-	while (clock() < start + ms);
-}
-*/
+#include "cards.h"
 
 void main(int argc, char *argv[]) {
+	// Seed rand()
+	srand(time(0));
+
 	// start renderer
-	runLogic();
+	//...
+
+	// Start game loop with 1 deck and shuffle at 75%
+	runLogic(1,.75);
+
 	// stop renderer
+	// ...
 }

@@ -4,6 +4,7 @@
 #include "cards.h"
 
 void renderHand(struct CardNode * fptr) {
+	// Renders a hand in text graphics
 	
 	//	/------\ 48 chars
 	//	|K    h| 54 with spaces
@@ -104,9 +105,6 @@ void renderHand(struct CardNode * fptr) {
 	{
 		printf("%c",s[i]);
 	}
-	//printf("\n\n%s\n\n", s);
-	//printf("space is %d index is %d\n\n",space, i);
-	
 }
 
 void renderScene(struct CardNode * dhand, struct CardNode * phand, int chips, int bet) {
