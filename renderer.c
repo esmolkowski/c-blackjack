@@ -5,6 +5,7 @@
 
 void renderHand(struct CardNode * fptr) {
 	// Renders a hand in text graphics
+	// Input is the first node in the Hand
 	
 	//	/------\ 48 chars
 	//	|K    h| 54 with spaces
@@ -33,20 +34,20 @@ void renderHand(struct CardNode * fptr) {
 	while (nxt != NULL)
 	{
 		s[i] = '|'; i++;
-		if (nxt->cptr->hidden) {
-			s[i] = nxt->cptr->style;
+		if (nxt->card->hidden) {
+			s[i] = nxt->card->style;
 		} else {
-			s[i] = nxt->cptr->face;
+			s[i] = nxt->card->face;
 		}
 		i++;
-		s[i] = nxt->cptr->style; i++;
-		s[i] = nxt->cptr->style; i++;
-		s[i] = nxt->cptr->style; i++;
-		s[i] = nxt->cptr->style; i++;
-		if (nxt->cptr->hidden) {
-			s[i] = nxt->cptr->style;
+		s[i] = nxt->card->style; i++;
+		s[i] = nxt->card->style; i++;
+		s[i] = nxt->card->style; i++;
+		s[i] = nxt->card->style; i++;
+		if (nxt->card->hidden) {
+			s[i] = nxt->card->style;
 		} else {
-			s[i] = nxt->cptr->suit;
+			s[i] = nxt->card->suit;
 		}
 		i++;
 		s[i] = '|'; i++;
@@ -60,8 +61,8 @@ void renderHand(struct CardNode * fptr) {
 	{
 		while (nxt != NULL)
 		{
-			s[i]='|'; i++; s[i]=nxt->cptr->style; i++; s[i]=nxt->cptr->style; i++; s[i]=nxt->cptr->style; i++;
-			s[i]=nxt->cptr->style; i++; s[i]=nxt->cptr->style; i++; s[i]=nxt->cptr->style; i++; s[i]='|';i++;
+			s[i]='|'; i++; s[i]=nxt->card->style; i++; s[i]=nxt->card->style; i++; s[i]=nxt->card->style; i++;
+			s[i]=nxt->card->style; i++; s[i]=nxt->card->style; i++; s[i]=nxt->card->style; i++; s[i]='|';i++;
 			s[i]=' '; i++;
 			nxt = nxt->next;
 		}
@@ -72,20 +73,20 @@ void renderHand(struct CardNode * fptr) {
 	while (nxt != NULL)
 	{
 		s[i] = '|'; i++;
-		if (nxt->cptr->hidden) {
-			s[i] = nxt->cptr->style;
+		if (nxt->card->hidden) {
+			s[i] = nxt->card->style;
 		} else {
-			s[i] = nxt->cptr->suit;
+			s[i] = nxt->card->suit;
 		}
 		i++;
-		s[i] = nxt->cptr->style; i++;
-		s[i] = nxt->cptr->style; i++;
-		s[i] = nxt->cptr->style; i++;
-		s[i] = nxt->cptr->style; i++;
-		if (nxt->cptr->hidden) {
-			s[i] = nxt->cptr->style;
+		s[i] = nxt->card->style; i++;
+		s[i] = nxt->card->style; i++;
+		s[i] = nxt->card->style; i++;
+		s[i] = nxt->card->style; i++;
+		if (nxt->card->hidden) {
+			s[i] = nxt->card->style;
 		} else {
-			s[i] = nxt->cptr->face;
+			s[i] = nxt->card->face;
 		}
 		i++;
 		s[i] = '|'; i++;
@@ -111,9 +112,9 @@ void renderScene(struct CardNode * dhand, struct CardNode * phand, int chips, in
 	printf("--------------------------------------------------------------------------");
 	printf("\nDEALER HAND:\n");
 	renderHand(dhand);
-	printf("TOTAL: %d\n", getTotal(dhand));
+	printf("TOTAL: %d\n", getHandTotal(dhand));
 	printf("\nPLAYER HAND:\n");
 	renderHand(phand);
-	printf("TOTAL: %2d                                      CHIPS: %7d BET: %7d\n", getTotal(phand),chips,bet);
+	printf("TOTAL: %2d                                      CHIPS: %7d BET: %7d\n", getHandTotal(phand),chips,bet);
 	printf("--------------------------------------------------------------------------\n");
 }

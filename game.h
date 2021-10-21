@@ -6,17 +6,17 @@
 
 typedef struct Game {
 	int chips;
-    int bet;
-    // shuffle deck after a given percentage of cards have been delt.
-    float shuffleAt;
+	int bet;
+	// shuffle deck after a given percentage of cards have been delt.
+	float shuffleAt;
 
-    Deck* deck; // Pointer to card deck
+	Deck* deck; // Pointer to card deck
 
-    CardNode* phand; // Pointer to player hand
-    CardNode* dhand; // Pointer to dealer hand
+	CardNode* phand; // Pointer to player hand
+	CardNode* dhand; // Pointer to dealer hand
 
-    bool inGame; // should the window be open
-    bool running; // is there a game actively running
+	bool inGame; // should the window be open
+	bool running; // is there a game actively running
 } Game;
 
 void runLogic(int numDecks,float shuffleAt); // Start the main game loop

@@ -7,12 +7,6 @@ void main(int argc, char *argv[]) {
 	// Seed rand()
 	srand(time(0));
 
-	// start renderer
-	//...
-
 	// Start game loop with 1 deck and shuffle at 75%
 	runLogic(1,.75);
-
-	// stop renderer
-	// ...
 }
